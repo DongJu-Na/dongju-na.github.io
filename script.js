@@ -1,36 +1,53 @@
 const feedContainer = document.getElementById('feed');
 const loader = document.getElementById('loader');
-const RSS_URL = 'https://api.rss2json.com/v1/api.json?rss_url=https://djlife.tistory.com/rss';
+
+const RSS_URL = 'https://djlife.tistory.com/rss';
+const PROXY_URL = `https://api.allorigins.win/get?url=${encodeURIComponent(RSS_URL)}`;
 const fallbackImage = 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930';
 
-fetch(RSS_URL)
+fetch(PROXY_URL)
   .then(res => res.json())
   .then(data => {
-    const items = data.items || [];
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(data.contents, "application/xml");
+
+    const items = [...xml.querySelectorAll("item")].slice(0, 50);
 
     if (items.length === 0) {
       loader.textContent = '게시물이 없습니다.';
       return;
     }
 
-    items.slice(0, 50).forEach(item => {
+    items.forEach(item => {
+      const title = item.querySelector("title")?.textContent || "제목 없음";
+      const link = item.querySelector("link")?.textContent || "#";
+      const pubDate = new Date(item.querySelector("pubDate")?.textContent || "").toLocaleDateString();
+
+      // 이미지 추출 (content:encoded 또는 description에서 img 태그 src 추출)
+      let imgSrc = fallbackImage;
+      const content = item.querySelector("content\\:encoded, encoded")?.textContent || item.querySelector("description")?.textContent;
+
+      if (content) {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = content;
+        const img = tempDiv.querySelector("img");
+        if (img && img.src) imgSrc = img.src;
+      }
+
       const card = document.createElement('div');
       card.className = 'card';
 
-      const thumbnail = item.thumbnail && item.thumbnail.startsWith('http') 
-        ? item.thumbnail 
-        : fallbackImage;
-
-      const content = `
-        <a href="${item.link}" target="_blank">
-          <img src="${thumbnail}" alt="${item.title}" onerror="this.src='${fallbackImage}'">
+      const html = `
+        <a href="${link}" target="_blank">
+          <img src="${imgSrc}" alt="${title}" onerror="this.src='${fallbackImage}'">
         </a>
         <div class="content">
-          <div class="title">${item.title}</div>
-          <div class="date">${new Date(item.pubDate).toLocaleDateString()}</div>
+          <div class="title">${title}</div>
+          <div class="date">${pubDate}</div>
         </div>
       `;
-      card.innerHTML = content;
+
+      card.innerHTML = html;
       feedContainer.appendChild(card);
     });
 
