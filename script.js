@@ -13,7 +13,7 @@ fetch(RSS_URL)
       return;
     }
 
-    items.slice(0, 10).forEach(item => {
+    items.slice(0, 50).forEach(item => {
       const card = document.createElement('div');
       card.className = 'card';
 
@@ -34,7 +34,7 @@ fetch(RSS_URL)
       feedContainer.appendChild(card);
     });
 
-    loader.remove(); // 로딩 문구 제거
+    loader.remove();
   })
   .catch(err => {
     console.error(err);
