@@ -4,8 +4,8 @@ const RSS_URL = 'https://api.rss2json.com/v1/api.json?rss_url=https://djlife.tis
 
 let items = [];
 let page = 0;
-const pageSize = 6; // 한 번에 보여줄 개수
-const fallbackImage = 'https://via.placeholder.com/300x280.png?text=No+Image';
+const pageSize = 3; // 한 번에 보여줄 개수
+const fallbackImage = 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930';
 
 function loadMore() {
   const start = page * pageSize;
