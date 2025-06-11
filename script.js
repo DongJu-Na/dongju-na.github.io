@@ -7,7 +7,7 @@ const PROXY_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RSS_U
 const fallbackImage = 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930';
 
 fetch(PROXY_URL)
-  .then(res => res.json())
+  .then(res => res.text())
   .then(data => {
     const parser = new DOMParser();
     const xml = parser.parseFromString(data.contents, "application/xml");
