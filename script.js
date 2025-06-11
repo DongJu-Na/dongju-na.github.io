@@ -2,7 +2,8 @@ const feedContainer = document.getElementById('feed');
 const loader = document.getElementById('loader');
 
 const RSS_URL = 'https://djlife.tistory.com/rss';
-const PROXY_URL = `https://api.allorigins.win/get?url=${encodeURIComponent(RSS_URL)}`;
+const PROXY_URL = `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(RSS_URL)}`;
+
 const fallbackImage = 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930';
 
 fetch(PROXY_URL)
